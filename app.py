@@ -46,6 +46,8 @@ def create_app():
     return app
 
 if __name__ == "__main__":
+    import os
     demo = create_app()
-    # Leaving launch parameters empty allows Hugging Face and Render to correctly auto-assign ports
-    demo.launch()
+    # Leaving launch parameters empty allows Hugging Face to launch cleanly, 
+    # but strictly setting 0.0.0.0 and PORT prevents Render from timing out
+    demo.launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 7860)))
