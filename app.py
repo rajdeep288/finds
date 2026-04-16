@@ -25,24 +25,28 @@ def create_app():
     # Attempt to load columns dynamically from CSV or fallback to defaults
     try:
         df = pd.read_csv('EnjoySport.csv')
-        inputs = [gr.Textbox(label=col, placeholder=f"Enter {col}") for col in df.columns[:-1]]
+        col_names = list(df.columns[:-1])
     except:
-        inputs = [
-            gr.Textbox(label="Time (e.g. Morning, Evening)"),
-            gr.Textbox(label="Weather (e.g. Sunny, Rainy)"),
-            gr.Textbox(label="Temperature (e.g. Warm, Cold)"),
-            gr.Textbox(label="Company (e.g. Yes, No)"),
-            gr.Textbox(label="Humidity (e.g. Mild, Normal, High)"),
-            gr.Textbox(label="Wind (e.g. Strong, Normal)")
-        ]
+        col_names = ["Time", "Weather", "Temperature", "Company", "Humidity", "Wind"]
     
-    app = gr.Interface(
-        fn=predict,
-        inputs=inputs,
-        outputs=gr.Textbox(label="Prediction (Will Enjoy Sport?)"),
-        title="FIND-S Algorithm Predictor",
-        description="A simple web application indicating whether the particular conditions match the trained FIND-S learned hypothesis."
-    )
+    # Use Blocks API for vertical layout + light theme
+    with gr.Blocks(theme=gr.themes.Soft()) as app:
+        gr.Markdown("# FIND-S Algorithm Predictor")
+        gr.Markdown("A simple web application indicating whether the particular conditions match the trained FIND-S learned hypothesis.")
+        
+        input_boxes = []
+        for col in col_names:
+            tb = gr.Textbox(label=col, placeholder=f"Enter {col}")
+            input_boxes.append(tb)
+        
+        submit_btn = gr.Button("Submit", variant="primary")
+        clear_btn = gr.Button("Clear")
+        
+        output_box = gr.Textbox(label="Prediction (Will Enjoy Sport?)")
+        
+        submit_btn.click(fn=predict, inputs=input_boxes, outputs=output_box)
+        clear_btn.click(fn=lambda: [""] * (len(col_names) + 1), inputs=None, outputs=input_boxes + [output_box])
+    
     return app
 
 if __name__ == "__main__":
