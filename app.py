@@ -29,8 +29,8 @@ def create_app():
     except:
         col_names = ["Time", "Weather", "Temperature", "Company", "Humidity", "Wind"]
     
-    # Use Blocks API for vertical layout + light theme
-    with gr.Blocks(theme=gr.themes.Soft()) as app:
+    # Use Blocks API for vertical layout + force light/white theme
+    with gr.Blocks(theme=gr.themes.Soft(), js="() => { document.querySelector('body').classList.remove('dark'); }") as app:
         gr.Markdown("# FIND-S Algorithm Predictor")
         gr.Markdown("A simple web application indicating whether the particular conditions match the trained FIND-S learned hypothesis.")
         
